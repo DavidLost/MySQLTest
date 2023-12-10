@@ -1,0 +1,91 @@
+﻿<Window x:Class="MySQLReader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="16"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="MySQL Database Reader" Height="666" Width="900" MinWidth="500" MinHeight="330">
+
+    <Grid x:Name="MainGrid" Margin="15,0,15,15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="12*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" x:Name="HeadLabel" Content="Connection Information" VerticalAlignment="Center" FontSize="18" Margin="5,0,0,0"/>
+        <materialDesign:PopupBox x:Name="SettingsMenu" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" Width="16" StaysOpen="True">
+            <materialDesign:PopupBox.ToggleContent>
+                <materialDesign:PackIcon Kind="Cog" VerticalAlignment="Center"/>
+            </materialDesign:PopupBox.ToggleContent>
+            <StackPanel>
+                <Label Content="Settings"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Content="Dark mode"/>
+                    <ToggleButton x:Name="ThemeToggle" Cursor="Hand" ToolTip="Toggle dark theme" IsChecked="{Binding IsDarkTheme}" Click="OnToggleTheme"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Content="Accent color"/>
+                    <xctk:ColorPicker x:Name="AccentColorPicker" SelectedColorChanged="OnChangeAccentColor"/>
+                </StackPanel>
+                <Button x:Name="HelpButton" Click="OnHelpButtonClick">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="Help" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Help" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </materialDesign:PopupBox>
+        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" x:Name="ServerLabel" Content="Server" VerticalAlignment="Center" Margin="5,0,0,0"/>
+        <Label Grid.Row="1" Grid.Column="1" x:Name="DatabaseLabel" Content="Database" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+        <Label Grid.Row="1" Grid.Column="2" x:Name="UserLabel" Content="User" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+        <Label Grid.Row="1" Grid.Column="3" x:Name="PasswordLabel" Content="Password" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+        <materialDesign:PackIcon Grid.Row="1" Grid.Column="4" x:Name="ConnectionStateIcon" Kind="AlertCircleOutline" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBox Grid.Row="2" Grid.Column="0" x:Name="ServerField" Text="localhost" VerticalContentAlignment="Center" Margin="5,0,5,0"/>
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="DatabaseField" Text="schule" VerticalContentAlignment="Center" Margin="5,0,5,0"/>
+        <TextBox Grid.Row="2" Grid.Column="2" x:Name="UserField" Text="david" Margin="5,0,5,0"/>
+        <PasswordBox Grid.Row="2" Grid.Column="3" x:Name="PasswordField" Password="secretpw" Margin="5,0,5,0"/>
+        <Button Grid.Row="2" Grid.Column="4" x:Name="SaveButton" Click="OnSaveButtonClick" Margin="5,0,5,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="ContentSaveOutline" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBlock Text="Save" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        <Label Grid.Row="3" Grid.Column="0" x:Name="QueryLabel" Content="Query" HorizontalAlignment="Left" FontSize="18" VerticalAlignment="Center" Margin="5,10,0,0"/>
+        <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" x:Name="QueryField" BorderThickness="1" BorderBrush="{DynamicResource MaterialDesignBody}" AcceptsReturn="True" AcceptsTab="True" Margin="5,0,5,0"/>
+        <Button Grid.Row="4" Grid.Column="4" x:Name="QueryButton" Click="OnQueryButtonClick" Margin="5,0,5,0" IsEnabled="False">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="Magnify" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBlock Text="Query" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+        <Label x:Name="QueryInfoLabel" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5" Content="Query Execution Info" FontStyle="Italic" FontSize="14" Margin="5"/>
+        <TabControl Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5" Margin="5,10,5,10">
+            <TabItem x:Name="TextTabItem" Header="TextView">
+                <TextBox x:Name="ResultTextBox" FontFamily="Consolas" FontSize="14" IsReadOnly="True"/>
+            </TabItem>
+            <TabItem x:Name="DataGridTabItem" Header="DataGridView">
+                <DataGrid x:Name="ResultDataGrid" d:ItemsSource="{d:SampleData ItemCount=2}" IsReadOnly="True" FontSize="13" Margin="5,10,5,0"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
